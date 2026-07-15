@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────
+   Custom theme tokens (Tailwind v4 CSS-first)
+───────────────────────────────────────── */
+@theme inline {
+  /* Colors */
+  --color-background: #000000;
+  --color-foreground: #f8fafc;
+
+  /* Purple / Blue palette */
+  --color-violet-400: #a78bfa;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed;
+  --color-blue-400: #60a5fa;
+  --color-blue-600: #2563eb;
+  --color-purple-400: #c084fc;
+
+  /* Fonts */
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-mono-code), "Fira Code", "Consolas", monospace;
+}
+
+/* ─────────────────────────────────────────
+   Base
+───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: #000000;
+  color: #f8fafc;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────
+   Selection
+───────────────────────────────────────── */
+::selection {
+  background-color: rgba(139, 92, 246, 0.35);
+  color: #ffffff;
+}
+
+/* ─────────────────────────────────────────
+   Scrollbar
+───────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.25);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.45);
+}
+
+/* ─────────────────────────────────────────
+   Focus visible (accessibility)
+───────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.7);
+  outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────
+   Gradient text utility
+───────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─────────────────────────────────────────
+   Glass card utility
+───────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ─────────────────────────────────────────
+   Section divider
+───────────────────────────────────────── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+}
+
+/* ─────────────────────────────────────────
+   Animated grid background
+───────────────────────────────────────── */
+.animated-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
