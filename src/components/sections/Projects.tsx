@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { ExternalLink, Star, GitFork, Clock, Code2, ChevronDown, ChevronUp } from "lucide-react";
 import { GitHubIcon } from "@/components/shared/SocialIcons";
-import { FEATURED_PROJECTS, OTHER_PROJECTS } from "@/lib/constants";
+import { FEATURED_PROJECTS } from "@/lib/constants";
 import type { GitHubRepo } from "@/lib/github";
 
 // ----- Types -----
@@ -133,7 +133,7 @@ function FeaturedCard({
         </div>
 
         {/* Tech badges */}
-        <div className="mb-6 flex flex-wrap gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
           {project.techStack.map((tech) => (
             <span
               key={tech}
@@ -143,6 +143,19 @@ function FeaturedCard({
             </span>
           ))}
         </div>
+
+        {/* Highlight badge — Razorpay / AWS callout */}
+        {"highlight" in project && project.highlight && (
+          <div className="mb-6">
+            <span className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1 text-xs font-semibold ${
+              (project.highlight as string).includes("Razorpay")
+                ? "border-orange-500/25 bg-orange-500/10 text-orange-300"
+                : "border-sky-500/25 bg-sky-500/10 text-sky-300"
+            }`}>
+              {project.highlight as string}
+            </span>
+          </div>
+        )}
 
         {/* Features toggle */}
         <div className="mb-6">
@@ -218,97 +231,7 @@ function FeaturedCard({
   );
 }
 
-// ----- Other Project Card -----
-function OtherCard({ project, index }: { project: (typeof OTHER_PROJECTS)[0]; index: number }) {
-  const repo = useRepoData(project.repoName);
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
 
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-      className="group flex flex-col gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.015] p-5 backdrop-blur-sm transition-all hover:border-violet-500/25 hover:bg-white/[0.03]"
-    >
-      {/* Icon + title */}
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">{project.emoji}</span>
-          <div>
-            <h4 className="font-semibold text-white/90 group-hover:text-white transition-colors">
-              {project.title}
-            </h4>
-            {repo?.language && (
-              <span className="flex items-center gap-1 text-xs text-white/30 mt-0.5">
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: LANG_COLORS[repo.language] || "#888" }}
-                />
-                {repo.language}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Stars */}
-        <div className="flex items-center gap-1 text-xs text-white/30">
-          <Star size={11} className="text-yellow-400/50" />
-          {repo?.stars ?? 0}
-        </div>
-      </div>
-
-      {/* Description */}
-      <p className="text-sm leading-relaxed text-white/40">
-        {repo?.description || project.description}
-      </p>
-
-      {/* Tech stack */}
-      <div className="flex flex-wrap gap-1.5">
-        {project.techStack.slice(0, 4).map((tech) => (
-          <span
-            key={tech}
-            className="rounded-md border border-white/[0.06] bg-white/[0.03] px-2 py-0.5 text-[11px] text-white/40"
-          >
-            {tech}
-          </span>
-        ))}
-      </div>
-
-      {/* Links */}
-      <div className="mt-auto flex items-center gap-3 pt-2 border-t border-white/[0.04]">
-        <a
-          href={project.githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-xs text-white/40 transition-colors hover:text-white/70"
-        >
-          <GitHubIcon size={12} className="" />
-          Code
-        </a>
-        {project.liveUrl && (
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-violet-400/70 transition-colors hover:text-violet-300"
-          >
-            <ExternalLink size={12} />
-            Demo
-          </a>
-        )}
-        {repo?.updatedAt && (
-          <span className="ml-auto flex items-center gap-1 text-[10px] text-white/20">
-            <Clock size={10} />
-            {timeAgo(repo.updatedAt)}
-          </span>
-        )}
-      </div>
-    </motion.div>
-  );
-}
 
 // ----- Main Section -----
 export function Projects() {
@@ -344,35 +267,9 @@ export function Projects() {
         </motion.div>
 
         {/* Featured */}
-        <div className="mb-20 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {FEATURED_PROJECTS.map((p, i) => (
             <FeaturedCard key={p.id} project={p} index={i} />
-          ))}
-        </div>
-
-        {/* Other Projects */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mb-8 flex items-center gap-4"
-        >
-          <h3 className="text-xl font-semibold text-white/80">Other Projects</h3>
-          <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
-          <a
-            href="https://github.com/simarjeetdua"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm text-violet-400 hover:text-violet-300 transition-colors"
-          >
-            View all on GitHub
-            <ExternalLink size={12} />
-          </a>
-        </motion.div>
-
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {OTHER_PROJECTS.map((p, i) => (
-            <OtherCard key={p.id} project={p} index={i} />
           ))}
         </div>
       </div>

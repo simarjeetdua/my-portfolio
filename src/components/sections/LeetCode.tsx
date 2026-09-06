@@ -147,7 +147,7 @@ export function LeetCode() {
                 {/* Static info cards */}
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   {[
-                    { icon: Code2, label: "Problems Solved", value: "100+", color: "text-orange-400" },
+                    { icon: Code2, label: "Problems Solved", value: "150+", color: "text-orange-400" },
                     { icon: Trophy, label: "Contest Rating", value: "—", color: "text-yellow-400" },
                     { icon: Award, label: "Current Badge", value: "Active", color: "text-violet-400" },
                     { icon: TrendingUp, label: "Coding Streak", value: "Consistent", color: "text-green-400" },
