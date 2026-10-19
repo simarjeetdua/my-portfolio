@@ -206,26 +206,42 @@ function FeaturedCard({
         )}
 
         {/* Buttons */}
-        <div className="flex gap-3">
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white/70 transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
-          >
-            <GitHubIcon size={15} className="" />
-            GitHub
-          </a>
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`flex items-center gap-2 rounded-xl bg-gradient-to-r ${project.color} px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:opacity-90 hover:scale-[1.02]`}
-          >
-            <ExternalLink size={15} />
-            {project.liveUrl === "#" ? "Coming Soon" : "Live Demo"}
-          </a>
-        </div>
+        
+{/* Buttons */}
+<div className="flex flex-wrap gap-3">
+  <a
+    href={project.githubUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white/70 transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
+  >
+    <GitHubIcon size={15} />
+    GitHub
+  </a>
+
+  {project.liveUrl && project.liveUrl !== "#" ? (
+    <a
+      href={project.liveUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`flex items-center gap-2 rounded-xl bg-gradient-to-r ${project.color} px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:scale-[1.02] hover:opacity-90`}
+    >
+      <ExternalLink size={15} />
+      Live Demo
+    </a>
+  ) : (
+    <button
+      type="button"
+      disabled
+      aria-label="Deployment coming soon"
+      className={`flex cursor-not-allowed items-center gap-2 rounded-xl bg-gradient-to-r ${project.color} px-5 py-2.5 text-sm font-medium text-white opacity-70 shadow-lg`}
+    >
+      <ExternalLink size={15} />
+      Deploying Very Soon
+    </button>
+  )}
+</div>
+
       </div>
     </motion.div>
   );
