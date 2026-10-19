@@ -20,7 +20,7 @@ export const PERSONAL_INFO = {
 };
 
 export const STATS = [
-  { value: "8+", label: "Projects Built" },
+  { value: "10+", label: "Projects Built" },
   { value: "20+", label: "Technologies" },
   { value: "2027", label: "B.Tech CSE" },
   { value: "Gen. Sec.", label: "Ameya Esports Club" },
