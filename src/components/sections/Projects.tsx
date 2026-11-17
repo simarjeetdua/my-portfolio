@@ -2,12 +2,11 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { ExternalLink, Star, GitFork, Clock, Code2, ChevronDown, ChevronUp } from "lucide-react";
+import { ExternalLink, Star, GitFork, Clock, ChevronDown, ChevronUp, Zap } from "lucide-react";
 import { GitHubIcon } from "@/components/shared/SocialIcons";
 import { FEATURED_PROJECTS } from "@/lib/constants";
 import type { GitHubRepo } from "@/lib/github";
 
-// ----- Types -----
 interface RepoData {
   stars: number;
   forks: number;
@@ -15,13 +14,10 @@ interface RepoData {
   description: string | null;
   updatedAt: string;
   topics: string[];
-  openIssues: number;
 }
 
-// ----- Hooks -----
 function useRepoData(repoName: string) {
   const [data, setData] = useState<RepoData | null>(null);
-
   useEffect(() => {
     fetch(`https://api.github.com/repos/simarjeetdua/${repoName}`)
       .then((r) => (r.ok ? r.json() : null))
@@ -34,17 +30,14 @@ function useRepoData(repoName: string) {
             description: repo.description,
             updatedAt: repo.updated_at,
             topics: repo.topics ?? [],
-            openIssues: repo.open_issues_count,
           });
         }
       })
       .catch(() => null);
   }, [repoName]);
-
   return data;
 }
 
-// ----- Helpers -----
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const days = Math.floor(diff / 86400000);
@@ -55,18 +48,30 @@ function timeAgo(dateStr: string) {
   return `${Math.floor(days / 365)}y ago`;
 }
 
-const LANG_COLORS: Record<string, string> = {
-  TypeScript: "#3178C6",
-  JavaScript: "#F7DF1E",
-  Python: "#3776AB",
-  "C++": "#00599C",
-  HTML: "#E34F26",
-  CSS: "#1572B6",
-  Shell: "#89E051",
+const ACCENT: Record<string, { badge: string; border: string; btn: string }> = {
+  indigo: {
+    badge:  "border-indigo-200 bg-indigo-50 text-indigo-700",
+    border: "border-indigo-200",
+    btn:    "bg-indigo-600 hover:bg-indigo-700 text-white",
+  },
+  blue: {
+    badge:  "border-blue-200 bg-blue-50 text-blue-700",
+    border: "border-blue-200",
+    btn:    "bg-blue-600 hover:bg-blue-700 text-white",
+  },
+  violet: {
+    badge:  "border-violet-200 bg-violet-50 text-violet-700",
+    border: "border-violet-200",
+    btn:    "bg-violet-600 hover:bg-violet-700 text-white",
+  },
+  sky: {
+    badge:  "border-sky-200 bg-sky-50 text-sky-700",
+    border: "border-sky-200",
+    btn:    "bg-sky-600 hover:bg-sky-700 text-white",
+  },
 };
 
-// ----- Featured Card -----
-function FeaturedCard({
+function ProjectCard({
   project,
   index,
 }: {
@@ -74,99 +79,108 @@ function FeaturedCard({
   index: number;
 }) {
   const repo = useRepoData(project.repoName);
-  const ref = useRef<HTMLDivElement>(null);
+  const ref  = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [showFeatures, setShowFeatures] = useState(false);
+
+  const accent = ACCENT[project.accent] ?? ACCENT.indigo;
+  const isLive = project.liveUrl !== "#";
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.15 }}
-      className="group relative overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-sm transition-all hover:border-white/15"
+      transition={{ duration: 0.5, delay: index * 0.12 }}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md hover:border-gray-300"
     >
-      {/* Top gradient bar */}
-      <div className={`h-1 w-full bg-gradient-to-r ${project.color}`} />
+      {/* Top accent stripe */}
+      <div className={`h-1 w-full ${
+        project.accent === "indigo" ? "bg-indigo-600" :
+        project.accent === "blue"   ? "bg-blue-600"   :
+        project.accent === "violet" ? "bg-violet-600" :
+        "bg-sky-600"
+      }`} />
 
-      <div className="p-6 sm:p-8">
-        {/* Header */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="mb-2 flex items-center gap-2">
-              <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-300">
+      <div className="flex flex-1 flex-col p-6 sm:p-7">
+        {/* Header row */}
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex-1 min-w-0">
+            {/* Badges row */}
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <span className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${accent.badge}`}>
                 Featured
               </span>
-              {repo?.language && (
-                <span className="flex items-center gap-1.5 text-xs text-white/40">
-                  <span
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: LANG_COLORS[repo.language] || "#888" }}
-                  />
-                  {repo.language}
+              {isLive && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                  Live
                 </span>
               )}
+              {repo?.language && (
+                <span className="text-xs text-gray-400">{repo.language}</span>
+              )}
             </div>
-            <h3 className="text-2xl font-bold text-white sm:text-3xl">{project.title}</h3>
-            <p className="mt-2 text-white/50">
-              {repo?.description || project.description}
-            </p>
+
+            <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">{project.title}</h3>
+            <p className="mt-0.5 text-sm font-medium text-gray-500">{project.subtitle}</p>
           </div>
 
-          {/* Stats */}
-          <div className="flex shrink-0 gap-4">
-            <div className="flex items-center gap-1.5 text-sm text-white/40">
-              <Star size={14} className="text-yellow-400/70" />
-              <span>{repo?.stars ?? 0}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-sm text-white/40">
-              <GitFork size={14} />
-              <span>{repo?.forks ?? 0}</span>
-            </div>
+          {/* Repo stats */}
+          <div className="flex shrink-0 items-center gap-3 text-sm text-gray-400">
+            <span className="flex items-center gap-1">
+              <Star size={13} className="text-yellow-500" />
+              {repo?.stars ?? 0}
+            </span>
+            <span className="flex items-center gap-1">
+              <GitFork size={13} />
+              {repo?.forks ?? 0}
+            </span>
             {repo?.updatedAt && (
-              <div className="flex items-center gap-1.5 text-sm text-white/30">
-                <Clock size={12} />
-                <span>{timeAgo(repo.updatedAt)}</span>
-              </div>
+              <span className="flex items-center gap-1 text-xs">
+                <Clock size={11} />
+                {timeAgo(repo.updatedAt)}
+              </span>
             )}
           </div>
         </div>
 
+        {/* Description */}
+        <p className="mb-5 text-sm leading-relaxed text-gray-600">
+          {repo?.description || project.description}
+        </p>
+
+        {/* Highlight badge */}
+        {"highlight" in project && project.highlight && (
+          <div className="mb-4">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+              <Zap size={11} />
+              {project.highlight as string}
+            </span>
+          </div>
+        )}
+
         {/* Tech badges */}
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="mb-5 flex flex-wrap gap-1.5">
           {project.techStack.map((tech) => (
             <span
               key={tech}
-              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/50"
+              className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-medium text-gray-600"
             >
               {tech}
             </span>
           ))}
         </div>
 
-        {/* Highlight badge — Razorpay / AWS callout */}
-        {"highlight" in project && project.highlight && (
-          <div className="mb-6">
-            <span className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1 text-xs font-semibold ${
-              (project.highlight as string).includes("Razorpay")
-                ? "border-orange-500/25 bg-orange-500/10 text-orange-300"
-                : "border-sky-500/25 bg-sky-500/10 text-sky-300"
-            }`}>
-              {project.highlight as string}
-            </span>
-          </div>
-        )}
-
-        {/* Features toggle */}
-        <div className="mb-6">
+        {/* Key Features toggle */}
+        <div className="mb-5">
           <button
             onClick={() => setShowFeatures(!showFeatures)}
-            className="flex items-center gap-1.5 text-sm text-violet-400 hover:text-violet-300 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
           >
             Key Features
             {showFeatures ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
-
           <AnimatePresence>
             {showFeatures && (
               <motion.div
@@ -177,11 +191,8 @@ function FeaturedCard({
               >
                 <ul className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                   {project.features.map((f) => (
-                    <li
-                      key={f}
-                      className="flex items-center gap-2 text-sm text-white/45"
-                    >
-                      <span className="h-1 w-1 rounded-full bg-violet-400 shrink-0" />
+                    <li key={f} className="flex items-center gap-2 text-sm text-gray-500">
+                      <span className="h-1 w-1 rounded-full bg-indigo-500 shrink-0" />
                       {f}
                     </li>
                   ))}
@@ -193,99 +204,69 @@ function FeaturedCard({
 
         {/* Topics */}
         {repo?.topics && repo.topics.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-1.5">
-            {repo.topics.slice(0, 6).map((t) => (
-              <span
-                key={t}
-                className="rounded-md bg-blue-500/10 px-2 py-0.5 text-xs text-blue-300/70"
-              >
+          <div className="mb-5 flex flex-wrap gap-1.5">
+            {repo.topics.slice(0, 5).map((t) => (
+              <span key={t} className="rounded-md bg-blue-50 px-2 py-0.5 text-xs text-blue-600">
                 #{t}
               </span>
             ))}
           </div>
         )}
 
-        {/* Buttons */}
-        
-{/* Buttons */}
-<div className="flex flex-wrap gap-3">
-  <a
-    href={project.githubUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white/70 transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
-  >
-    <GitHubIcon size={15} />
-    GitHub
-  </a>
-
-  {project.liveUrl && project.liveUrl !== "#" ? (
-    <a
-      href={project.liveUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex items-center gap-2 rounded-xl bg-gradient-to-r ${project.color} px-5 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:scale-[1.02] hover:opacity-90`}
-    >
-      <ExternalLink size={15} />
-      Live Demo
-    </a>
-  ) : (
-    <button
-      type="button"
-      disabled
-      aria-label="Deployment coming soon"
-      className={`flex cursor-not-allowed items-center gap-2 rounded-xl bg-gradient-to-r ${project.color} px-5 py-2.5 text-sm font-medium text-white opacity-70 shadow-lg`}
-    >
-      <ExternalLink size={15} />
-      Deploying Very Soon
-    </button>
-  )}
-</div>
-
+        {/* Buttons — pushed to bottom */}
+        <div className="mt-auto flex flex-wrap gap-3 pt-2">
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:border-gray-300 hover:bg-gray-50"
+          >
+            <GitHubIcon size={15} />
+            GitHub
+          </a>
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all hover:scale-[1.01] ${accent.btn}`}
+          >
+            <ExternalLink size={14} />
+            {isLive ? "Live Demo" : "Coming Soon"}
+          </a>
+        </div>
       </div>
     </motion.div>
   );
 }
 
-
-
-// ----- Main Section -----
 export function Projects() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref    = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="projects" className="relative py-24 sm:py-32">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-        <div className="absolute left-1/4 top-0 h-72 w-72 rounded-full bg-blue-600/8 blur-[120px]" />
-      </div>
-
+    <section id="projects" className="relative py-24 sm:py-32 bg-gray-50">
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
           className="mb-16 text-center"
         >
-          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-violet-400">
-            What I've built
+          <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-indigo-600">
+            What I&apos;ve built
           </p>
-          <h2 className="text-4xl font-bold text-white sm:text-5xl">
-            Featured{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
-              Projects
-            </span>
+          <h2 className="text-4xl font-bold text-gray-900 sm:text-5xl">
+            Featured <span className="accent-text">Projects</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base text-white/40">
+          <p className="mx-auto mt-4 max-w-xl text-base text-gray-500">
             Real-world applications built with modern technologies. Data pulled live from GitHub.
           </p>
         </motion.div>
 
-        {/* Featured */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {FEATURED_PROJECTS.map((p, i) => (
-            <FeaturedCard key={p.id} project={p} index={i} />
+            <ProjectCard key={p.id} project={p} index={i} />
           ))}
         </div>
       </div>

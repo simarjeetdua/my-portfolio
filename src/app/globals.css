@@ -4,19 +4,12 @@
    Custom theme tokens (Tailwind v4 CSS-first)
 ───────────────────────────────────────── */
 @theme inline {
-  /* Colors */
-  --color-background: #000000;
-  --color-foreground: #f8fafc;
-
-  /* Purple / Blue palette */
-  --color-violet-400: #a78bfa;
-  --color-violet-500: #8b5cf6;
-  --color-violet-600: #7c3aed;
-  --color-blue-400: #60a5fa;
-  --color-blue-600: #2563eb;
-  --color-purple-400: #c084fc;
-
-  /* Fonts */
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-500: #6366f1;
+  --color-blue-600:   #2563eb;
+  --color-blue-500:   #3b82f6;
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-mono-code), "Fira Code", "Consolas", monospace;
 }
@@ -37,80 +30,56 @@ html {
 }
 
 body {
-  background-color: #000000;
-  color: #f8fafc;
+  background-color: #ffffff;
+  color: #111827;
   font-family: var(--font-sans);
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* ─────────────────────────────────────────
-   Selection
-───────────────────────────────────────── */
 ::selection {
-  background-color: rgba(139, 92, 246, 0.35);
-  color: #ffffff;
+  background-color: rgba(79, 70, 229, 0.15);
+  color: #111827;
 }
 
 /* ─────────────────────────────────────────
    Scrollbar
 ───────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.25);
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.45);
-}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* ─────────────────────────────────────────
-   Focus visible (accessibility)
-───────────────────────────────────────── */
 :focus-visible {
-  outline: 2px solid rgba(139, 92, 246, 0.7);
+  outline: 2px solid rgba(79, 70, 229, 0.6);
   outline-offset: 2px;
 }
 
 /* ─────────────────────────────────────────
-   Gradient text utility
+   Utilities
 ───────────────────────────────────────── */
-.gradient-text {
-  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+.accent-text {
+  background: linear-gradient(135deg, #4f46e5, #2563eb);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ─────────────────────────────────────────
-   Glass card utility
-───────────────────────────────────────── */
 .glass {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #e5e7eb;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* ─────────────────────────────────────────
-   Section divider
-───────────────────────────────────────── */
 .section-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+  background: #e5e7eb;
 }
 
-/* ─────────────────────────────────────────
-   Animated grid background
-───────────────────────────────────────── */
 .animated-grid {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 }

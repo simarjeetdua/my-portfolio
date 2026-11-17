@@ -3,46 +3,78 @@
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { TECH_CATEGORIES } from "@/lib/constants";
-import { TechMarquee } from "@/components/shared/TechMarquee";
+import Image from "next/image";
+
+function TechItem({
+  name,
+  logo,
+  fallback,
+}: {
+  name: string;
+  logo: string | null;
+  fallback?: string;
+}) {
+  const [imgErr, setImgErr] = useState(false);
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.25 }}
+      className="group flex flex-col items-center gap-2.5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all hover:border-indigo-200 hover:shadow-md cursor-default"
+    >
+      <div className="flex h-9 w-9 items-center justify-center">
+        {logo && !imgErr ? (
+          <Image
+            src={logo}
+            alt={name}
+            width={32}
+            height={32}
+            className="h-7 w-7 object-contain"
+            onError={() => setImgErr(true)}
+            unoptimized
+          />
+        ) : (
+          <span className="text-2xl leading-none">{fallback ?? "⚙️"}</span>
+        )}
+      </div>
+      <span className="text-center text-xs font-medium text-gray-600 leading-tight group-hover:text-gray-900 transition-colors">
+        {name}
+      </span>
+    </motion.div>
+  );
+}
 
 export function TechStack() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref    = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [activeCategory, setActiveCategory] = useState("Frontend");
+  const [activeCategory, setActiveCategory] = useState("Languages");
 
   const currentCategory = TECH_CATEGORIES.find((c) => c.label === activeCategory);
 
   return (
-    <section id="tech-stack" className="relative py-24 sm:py-32">
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-        <div className="absolute right-1/4 top-1/3 h-64 w-64 rounded-full bg-violet-600/8 blur-[100px]" />
-      </div>
-
+    <section id="tech-stack" className="relative py-24 sm:py-32 bg-white">
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
           className="mb-16 text-center"
         >
-          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-violet-400">
+          <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-indigo-600">
             My toolkit
           </p>
-          <h2 className="text-4xl font-bold text-white sm:text-5xl">
-            Tech{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
-              Stack
-            </span>
+          <h2 className="text-4xl font-bold text-gray-900 sm:text-5xl">
+            Tech <span className="accent-text">Stack</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base text-white/40">
-            Technologies I use to build modern, scalable, and AI-powered applications.
+          <p className="mx-auto mt-4 max-w-xl text-base text-gray-500">
+            Technologies I use to build scalable, modern, and AI-powered applications.
           </p>
         </motion.div>
 
         {/* Category tabs */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-10 flex flex-wrap justify-center gap-2"
@@ -51,58 +83,55 @@ export function TechStack() {
             <button
               key={cat.label}
               onClick={() => setActiveCategory(cat.label)}
-              className={`relative rounded-xl px-4 py-2 text-sm font-medium transition-all ${
+              className={`relative rounded-lg px-4 py-2 text-sm font-medium transition-all ${
                 activeCategory === cat.label
-                  ? "text-white"
-                  : "text-white/40 hover:text-white/70"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "border border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:text-gray-700"
               }`}
             >
-              {activeCategory === cat.label && (
-                <motion.span
-                  layoutId="activeTab"
-                  className="absolute inset-0 rounded-xl bg-gradient-to-r from-violet-600/30 to-blue-600/20 border border-violet-500/30"
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                />
-              )}
-              <span className="relative">{cat.label}</span>
+              {cat.label}
             </button>
           ))}
         </motion.div>
 
-        {/* Tech cards grid */}
-        <div className="min-h-[200px]">
+        {/* Grid */}
+        <div className="min-h-[220px]">
           <motion.div
             key={activeCategory}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4"
+            transition={{ duration: 0.25 }}
+            className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7"
           >
-            {currentCategory?.items.map((tech, i) => (
-              <motion.div
+            {currentCategory?.items.map((tech) => (
+              <TechItem
                 key={tech.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.06 }}
-                whileHover={{ scale: 1.05, y: -2 }}
-                className="group relative flex flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 backdrop-blur-sm transition-all hover:border-white/15 hover:bg-white/[0.05] cursor-default"
-              >
-                {/* Hover glow */}
-                <div
-                  className="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 blur-xl"
-                  style={{ backgroundColor: `${tech.color}15` }}
-                />
-                <span className="relative text-3xl">{tech.icon}</span>
-                <span className="relative text-sm font-medium text-white/60 group-hover:text-white/90 transition-colors">
-                  {tech.name}
-                </span>
-              </motion.div>
+                name={tech.name}
+                logo={"logo" in tech ? tech.logo : null}
+                fallback={"fallback" in tech ? (tech as { fallback?: string }).fallback : undefined}
+              />
             ))}
           </motion.div>
         </div>
 
-        {/* Marquee */}
-        <TechMarquee />
+        {/* Special callout for AI & Agents */}
+        {activeCategory === "AI & Agents" && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-8 rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-4"
+          >
+            <p className="text-sm font-semibold text-indigo-800 mb-1">
+              MCP & Multi-Agent Orchestration
+            </p>
+            <p className="text-sm text-indigo-700">
+              Building Model Context Protocol (MCP) servers that expose tools and resources to AI
+              agents. Designing multi-agent workflows where autonomous agents collaborate to
+              complete complex tasks — combining LLM reasoning, tool use, and memory.
+            </p>
+          </motion.div>
+        )}
       </div>
     </section>
   );

@@ -12,12 +12,9 @@ import { CurrentlyExploring } from "@/components/sections/CurrentlyExploring";
 import { GitHub } from "@/components/sections/GitHub";
 import { LeetCode } from "@/components/sections/LeetCode";
 import { Contact } from "@/components/sections/Contact";
-import { CursorSpotlight } from "@/components/effects/CursorSpotlight";
-import { FloatingParticles } from "@/components/effects/FloatingParticles";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { CommandPalette } from "@/components/shared/CommandPalette";
 import { BackToTop } from "@/components/shared/BackToTop";
-import { LoadingScreen } from "@/components/shared/LoadingScreen";
 
 export default function Home() {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -35,12 +32,7 @@ export default function Home() {
 
   return (
     <>
-      {/* Loading screen */}
-      <LoadingScreen />
-
-      {/* Background effects */}
-      <FloatingParticles />
-      <CursorSpotlight />
+      {/* Scroll progress bar */}
       <ScrollProgress />
 
       {/* Command palette */}
@@ -52,45 +44,17 @@ export default function Home() {
       {/* Main content */}
       <main>
         <Hero />
-
-        <div className="section-divider" />
-
         <About />
-
-        <div className="section-divider" />
-
-        {/* Achievements — new section below About */}
         <Achievements />
-
-        <div className="section-divider" />
-
         <Projects />
-
-        <div className="section-divider" />
-
         <TechStack />
-
-        <div className="section-divider" />
-
         <CurrentlyExploring />
-
-        <div className="section-divider" />
-
-        {/* Open Source / GitHub Repos */}
         <GitHub />
-
-        <div className="section-divider" />
-
         <LeetCode />
-
-        <div className="section-divider" />
-
         <Contact />
       </main>
 
       <Footer />
-
-      {/* Back to top */}
       <BackToTop />
     </>
   );
