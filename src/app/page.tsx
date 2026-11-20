@@ -15,6 +15,7 @@ import { Contact } from "@/components/sections/Contact";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { CommandPalette } from "@/components/shared/CommandPalette";
 import { BackToTop } from "@/components/shared/BackToTop";
+import { PageTransition } from "@/components/effects/PageTransition";
 
 export default function Home() {
   const [commandOpen, setCommandOpen] = useState(false);
@@ -42,17 +43,19 @@ export default function Home() {
       <Navbar onOpenCommand={() => setCommandOpen(true)} />
 
       {/* Main content */}
-      <main>
-        <Hero />
-        <About />
-        <Achievements />
-        <Projects />
-        <TechStack />
-        <CurrentlyExploring />
-        <GitHub />
-        <LeetCode />
-        <Contact />
-      </main>
+      <PageTransition>
+        <main>
+          <Hero />
+          <About />
+          <Achievements />
+          <Projects />
+          <TechStack />
+          <CurrentlyExploring />
+          <GitHub />
+          <LeetCode />
+          <Contact />
+        </main>
+      </PageTransition>
 
       <Footer />
       <BackToTop />

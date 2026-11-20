@@ -5,6 +5,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { Send, Mail, CheckCircle, Loader2, AlertCircle, X } from "lucide-react";
 import { GitHubIcon, LinkedInIcon, LeetCodeIcon } from "@/components/shared/SocialIcons";
 import { PERSONAL_INFO } from "@/lib/constants";
+import { viewportOnce } from "@/lib/animations";
 
 const SOCIALS = [
   { icon: GitHubIcon,   label: "GitHub",   href: PERSONAL_INFO.github,                 color: "hover:border-gray-400 hover:text-gray-900" },
@@ -81,7 +82,7 @@ function SuccessCard() {
 
 export function Contact() {
   const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, viewportOnce);
 
   const [status, setStatus]           = useState<Status>("idle");
   const [form, setForm]               = useState<FormState>(EMPTY_FORM);
@@ -126,16 +127,31 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-24 sm:py-32 bg-gray-50">
-      <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="relative py-24 sm:py-32 bg-white overflow-hidden">
+      {/* Background orb */}
+      <motion.div
+        className="pointer-events-none absolute right-0 bottom-0 h-96 w-96 rounded-full bg-indigo-50/70 blur-3xl"
+        animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        aria-hidden
+      />
+
+      <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 32 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mb-16 text-center"
         >
-          <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-indigo-600">Get in touch</p>
+          <motion.p
+            className="mb-2 text-sm font-semibold uppercase tracking-widest text-indigo-600"
+            initial={{ opacity: 0, letterSpacing: "0.1em" }}
+            animate={inView ? { opacity: 1, letterSpacing: "0.2em" } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            Get in touch
+          </motion.p>
           <h2 className="text-4xl font-bold text-gray-900 sm:text-5xl">
             Let&apos;s <span className="accent-text">Connect</span>
           </h2>
@@ -147,9 +163,9 @@ export function Contact() {
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 lg:grid-cols-5 lg:gap-12">
           {/* Left — socials */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -32 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col gap-5 lg:col-span-2"
           >
             <div>
@@ -159,21 +175,26 @@ export function Contact() {
 
             <div className="grid grid-cols-2 gap-3">
               {SOCIALS.map(({ icon: Icon, label, href, color }) => (
-                <a
+                <motion.a
                   key={label}
                   href={href}
                   target={href.startsWith("mailto:") ? undefined : "_blank"}
                   rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  whileTap={{ scale: 0.96 }}
                   className={`flex items-center gap-2.5 rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-600 shadow-sm transition-all ${color}`}
                 >
                   <Icon size={15} />
                   <span>{label}</span>
-                </a>
+                </motion.a>
               ))}
             </div>
 
             {/* Email card */}
-            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <motion.div
+              whileHover={{ y: -2 }}
+              className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 shadow-sm"
+            >
               <p className="mb-1 text-xs text-gray-400">Email directly</p>
               <a
                 href={`mailto:${PERSONAL_INFO.email}`}
@@ -181,7 +202,7 @@ export function Contact() {
               >
                 {PERSONAL_INFO.email}
               </a>
-            </div>
+            </motion.div>
 
             {/* Response time */}
             <div className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
@@ -193,9 +214,9 @@ export function Contact() {
 
           {/* Right — form */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 32 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="lg:col-span-3"
           >
             {status === "success" ? (
@@ -296,8 +317,8 @@ export function Contact() {
                 <motion.button
                   type="submit"
                   disabled={status === "loading"}
-                  whileHover={status !== "loading" ? { scale: 1.01 } : {}}
-                  whileTap={status !== "loading" ? { scale: 0.99 } : {}}
+                  whileHover={status !== "loading" ? { scale: 1.02 } : {}}
+                  whileTap={status !== "loading" ? { scale: 0.98 } : {}}
                   className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {status === "loading" ? (
